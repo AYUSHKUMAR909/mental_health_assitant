@@ -10,9 +10,21 @@ load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel("gemini-1.5-pro-latest")
 
+
+# Streamlit page setup
 st.set_page_config(page_title="🧠 Mental Health Chatbot", page_icon="🧠")
 st.title("🧠 AI Mental Health Chatbot")
 st.write("💬 Chat with an AI therapist about your feelings, emotions, stress, or mental well-being.")
+
+# Tone selector
+tone = st.selectbox("Choose the tone you prefer:", ["Empathetic", "Encouraging", "Practical", "Motivational"])
+
+# Clear chat button
+if st.button("🧹 Clear Chat"):
+    st.session_state.messages = [
+        {"role": "assistant", "content": "Hello! I'm here to support your mental well-being. How are you feeling today?"}
+    ]
+    st.experimental_rerun()
 
 # Initialize chat history
 if "messages" not in st.session_state:
@@ -20,7 +32,7 @@ if "messages" not in st.session_state:
         {"role": "assistant", "content": "Hello! I'm here to support your mental well-being. How are you feeling today?"}
     ]
 
-# Display chat messages
+# Display chat history
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
@@ -29,16 +41,15 @@ for msg in st.session_state.messages:
 user_input = st.chat_input("How are you feeling today?")
 
 if user_input:
-    # Add user message to history
+    # Add user message
     st.session_state.messages.append({"role": "user", "content": user_input})
 
-    # Display user message
     with st.chat_message("user"):
         st.markdown(user_input)
 
-    # Mental health tailored response
+    # Prompt to Gemini model
     prompt = f"""
-    You are a compassionate mental health AI assistant. Respond empathetically to the user's input.
+    You are a compassionate mental health AI assistant. Respond in a {tone.lower()} tone to the user's message.
 
     User: {user_input}
 
@@ -49,11 +60,10 @@ if user_input:
     - Encouraging tone throughout
     """
 
-    response = model.generate_content(prompt).text.strip()
-
-    # Add AI response to chat history
-    st.session_state.messages.append({"role": "assistant", "content": response})
-
-    # Display AI response
     with st.chat_message("assistant"):
-        st.markdown(response)
+        with st.spinner("Typing..."):
+            response = model.generate_content(prompt).text.strip()
+            st.markdown(response)
+
+    # Save assistant response
+    st.session_state.messages.append({"role": "assistant", "content": response})
