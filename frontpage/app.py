@@ -54,7 +54,7 @@ if user_input:
     prompt = f"""
     You are a compassionate mental health AI assistant. Respond in a {tone.lower()} tone to the user's message.
 
-    Keep your response **brief and easy to read** (ideally under 80 words).
+    Keep your response **brief and easy to read** (ideally between 30 to 50 words).
 
     User: {user_input}
 
