@@ -54,14 +54,16 @@ if user_input:
     prompt = f"""
     You are a compassionate mental health AI assistant. Respond in a {tone.lower()} tone to the user's message.
 
+    Keep your response **brief and easy to read** (ideally under 80 words).
+
     User: {user_input}
 
     Your response should include:
     - Emotional validation
-    - Supportive advice or coping strategies
-    - When to seek help from a professional
-    - Encouraging tone throughout
-    """
+    - One supportive suggestion or coping strategy
+    - A gentle reminder that it's okay to seek professional help
+    - Maintain an encouraging tone throughout
+"""
 
     with st.chat_message("assistant"):
         with st.spinner("Typing..."):
